@@ -4,164 +4,210 @@
 #include <string.h>
 #include <limits.h>
 
-int _printf(const char *format, ...) {
+int _printf(const char *format, ...) 
+{
     va_list arglist;
     int charcount = 0;
 
     va_start(arglist, format);
 
-    while (*format != '\0') {
-        if (*format == '%') {
+    while (*format != '\0') 
+    {
+        if (*format == '%') 
+        {
             format++;
-            if (*format == '%') {
+            if (*format == '%') 
+            {
                 putchar('%');
                 charcount++;
             }
-            else if (*format == 'c') {
+            else if (*format == 'c') 
+            {
                 char c = va_arg(arglist, int);
                 putchar(c);
                 charcount++;
             }
-            else if (*format == 's') {
+            else if (*format == 's') 
+            {
                 char *s = va_arg(arglist, char*);
                 fputs(s, stdout);
                 charcount += strlen(s);
             }
-            else if (*format == 'd' || *format == 'i') {
+            else if (*format == 'd' || *format == 'i') 
+            {
                 int num = va_arg(arglist, int);
-                if (num < 0) {
+                if (num < 0) 
+                {
                     putchar('-');
                     charcount++;
                     num = -num;
                 }
-                if (num == 0) {
+                if (num == 0) 
+                {
                     putchar('0');
                     charcount++;
                 }
-                else {
+                else 
+                {
                     int num_digits = 0;
                     int tmp_num = num;
-                    while (tmp_num > 0) {
+                    while (tmp_num > 0) 
+                    {
                         num_digits++;
                         tmp_num /= 10;
                     }
                     char num_str[num_digits];
-                    for (int i = num_digits - 1; i >= 0; i--) {
+                    for (int i = num_digits - 1; i >= 0; i--) 
+                    {
                         num_str[i] = '0' + (num % 10);
                         num /= 10;
                     }
-                    for (int i = 0; i < num_digits; i++) {
+                    for (int i = 0; i < num_digits; i++) 
+                    {
                         putchar(num_str[i]);
                         charcount++;
                     }
                 }
             }
-            else if (*format == 'x' || *format == 'X') {
+            else if (*format == 'x' || *format == 'X') 
+            {
                 unsigned int num = va_arg(arglist, unsigned int);
-                if (num == 0) {
+                if (num == 0) 
+                {
                     putchar('0');
                     charcount++;
                 }
-                else {
+                else 
+                {
                     char num_str[20];
                     int index = 0;
-                    while (num > 0) {
+                    while (num > 0) 
+                    {
                         int digit = num % 16;
-                        if (digit < 10) {
+                        if (digit < 10) 
+                        {
                             num_str[index++] = '0' + digit;
                         }
-                        else {
-                            if (*format == 'x') {
+                        else 
+                        {
+                            if (*format == 'x') 
+                            {
                                 num_str[index++] = 'a' + digit - 10;
                             }
-                            else {
+                            else 
+                            {
                                 num_str[index++] = 'A' + digit - 10;
                             }
                         }
                         num /= 16;
                     }
-                    for (int i = index - 1; i >= 0; i--) {
+                    for (int i = index - 1; i >= 0; i--) 
+                    {
                         putchar(num_str[i]);
                         charcount++;
                     }
                 }
             }
-            else if (*format == 'o') {
+            else if (*format == 'o') 
+            {
                 unsigned int num = va_arg(arglist, unsigned int);
-                if (num == 0) {
+                if (num == 0) 
+                {
                     putchar('0');
                     charcount++;
                 }
-                else {
+                else 
+                {
                     int num_digits = 0;
                     unsigned int tmp_num = num;
-                    while (tmp_num > 0) {
+                    while (tmp_num > 0) 
+                    {
                         num_digits++;
                         tmp_num /= 8;
                     }
                     char num_str[num_digits];
-                    for (int i = num_digits - 1; i >= 0; i--) {
+                    for (int i = num_digits - 1; i >= 0; i--) 
+                    {
                         num_str[i] = '0' + (num % 8);
                         num /= 8;
                     }
-                    for (int i = 0; i < num_digits; i++) {
+                    for (int i = 0; i < num_digits; i++) 
+                    {
                         putchar(num_str[i]);
                         charcount++;
                     }
                 }
             }
-            else if (*format == 'p') {
+            else if (*format == 'p') 
+            {
                 void *ptr = va_arg(arglist, void *);
                 unsigned long int ui = (unsigned long int)ptr;
                 putchar('0');
                 putchar('x');
                 int num_digits = 0;
                 unsigned long int tmp_num = ui;
-                while (tmp_num > 0) {
+                while (tmp_num > 0) 
+                {
                     num_digits++;
                     tmp_num /= 16;
                 }
                 char hex_str[num_digits];
-                for (int i = num_digits - 1; i >= 0; i--) {
+                for (int i = num_digits - 1; i >= 0; i--) 
+                {
                     int rem = ui % 16;
-                    if (rem < 10) {
+                    if (rem < 10) 
+                    {
                         hex_str[i] = rem + '0';
-                    } else {
+                    } else 
+                    {
                         hex_str[i] = rem - 10 + 'a';
                     }
                     ui /= 16;
                 }
-                for (int i = 0; i < num_digits; i++) {
+                for (int i = 0; i < num_digits; i++) 
+                {
                     putchar(hex_str[i]);
                     charcount++;
                 }
             }
-            else if (*format == 'u') {
+            else if (*format == 'u') 
+            {
                 unsigned int num = va_arg(arglist, unsigned int);
-                if (num == 0) {
+                if (num == 0) 
+                {
                     putchar('0');
                     charcount++;
                 }
                 else {
                     int num_digits = 0;
                     unsigned int tmp_num = num;
-                    while (tmp_num > 0) {
+                    while (tmp_num > 0) 
+                    {
                         num_digits++;
                         tmp_num /= 10;
                     }
                     char num_str[num_digits];
-                    for (int i = num_digits - 1; i >= 0; i--) {
+                    for (int i = num_digits - 1; i >= 0; i--) 
+                    {
                         num_str[i] = '0' + (num % 10);
                         num /= 10;
                     }
-                    for (int i = 0; i < num_digits; i++) {
+                    for (int i = 0; i < num_digits; i++) 
+                    {
                         putchar(num_str[i]);
                         charcount++;
                     }
                 }
             }
+            else 
+            {
+                putchar('%');
+                putchar(*format);
+                charcount += 2;
+            }
         }
-        else {
+        else 
+        {
             putchar(*format);
             charcount++;
         }
