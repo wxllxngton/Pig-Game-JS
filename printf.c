@@ -4,100 +4,111 @@
 #include <string.h>
 #include <limits.h>
 
-int _printf(const char *format, ...) 
+#include <unistd.h>  // for write(), fileno()
+
+int _putchar(char c) {
+    return write(fileno(stdout), &c, 1);
+}
+
+
+int _printf(const char *format, ...)
 {
     va_list arglist;
     int charcount = 0;
 
     va_start(arglist, format);
 
-    while (*format != '\0') 
+    while (*format != '\0')
     {
-        if (*format == '%') 
+        if (*format == '%')
         {
             format++;
-            if (*format == '%') 
+            if (*format == '%')
             {
-                putchar('%');
+                _putchar('%');
                 charcount++;
             }
-            else if (*format == 'c') 
+            else if (*format == 'c')
             {
                 char c = va_arg(arglist, int);
-                putchar(c);
+                _putchar(c);
                 charcount++;
             }
-            else if (*format == 's') 
+            else if (*format == 's')
             {
                 char *s = va_arg(arglist, char*);
-                fputs(s, stdout);
-                charcount += strlen(s);
+                while (*s)
+                {
+                    _putchar(*s);
+                    charcount++;
+                    s++;
+                }
             }
-            else if (*format == 'd' || *format == 'i') 
+            else if (*format == 'd' || *format == 'i')
             {
                 int num = va_arg(arglist, int);
-                if (num < 0) 
+                if (num < 0)
                 {
-                    putchar('-');
+                    _putchar('-');
                     charcount++;
                     num = -num;
                 }
-                if (num == 0) 
+                if (num == 0)
                 {
-                    putchar('0');
+                    _putchar('0');
                     charcount++;
                 }
-                else 
+                else
                 {
                     int num_digits = 0, i;
                     int tmp_num = num;
                     char *num_str;
-                    while (tmp_num > 0) 
+                    while (tmp_num > 0)
                     {
                         num_digits++;
                         tmp_num /= 10;
                     }
                     num_str = malloc(sizeof(char) * num_digits);
                     i = num_digits - 1;
-                    for (; i >= 0; i--) 
+                    for (; i >= 0; i--)
                     {
                         num_str[i] = '0' + (num % 10);
                         num /= 10;
                     }
                     i = 0;
-                    for (; i < num_digits; i++) 
+                    for (; i < num_digits; i++)
                     {
-                        putchar(num_str[i]);
+                        _putchar(num_str[i]);
                         charcount++;
                     }
                 }
             }
-            else if (*format == 'x' || *format == 'X') 
+            else if (*format == 'x' || *format == 'X')
             {
                 unsigned int num = va_arg(arglist, unsigned int);
-                if (num == 0) 
+                if (num == 0)
                 {
-                    putchar('0');
+                    _putchar('0');
                     charcount++;
                 }
-                else 
+                else
                 {
                     char num_str[20];
                     int index = 0, i;
-                    while (num > 0) 
+                    while (num > 0)
                     {
                         int digit = num % 16;
-                        if (digit < 10) 
+                        if (digit < 10)
                         {
                             num_str[index++] = '0' + digit;
                         }
-                        else 
+                        else
                         {
-                            if (*format == 'x') 
+                            if (*format == 'x')
                             {
                                 num_str[index++] = 'a' + digit - 10;
                             }
-                            else 
+                            else
                             {
                                 num_str[index++] = 'A' + digit - 10;
                             }
@@ -105,123 +116,123 @@ int _printf(const char *format, ...)
                         num /= 16;
                     }
                     i = index - 1;
-                    for (; i >= 0; i--) 
+                    for (; i >= 0; i--)
                     {
-                        putchar(num_str[i]);
+                        _putchar(num_str[i]);
                         charcount++;
                     }
                 }
             }
-            else if (*format == 'o') 
+            else if (*format == 'o')
             {
                 unsigned int num = va_arg(arglist, unsigned int);
-                if (num == 0) 
+                if (num == 0)
                 {
-                    putchar('0');
+                    _putchar('0');
                     charcount++;
                 }
-                else 
+                else
                 {
                     int num_digits = 0, i;
                     unsigned int tmp_num = num;
                     char *num_str;
-                    while (tmp_num > 0) 
+                    while (tmp_num > 0)
                     {
                         num_digits++;
                         tmp_num /= 8;
                     }
                     num_str = malloc(sizeof(char) * num_digits);
                     i = num_digits - 1;
-                    for (; i >= 0; i--) 
+                    for (; i >= 0; i--)
                     {
                         num_str[i] = '0' + (num % 8);
                         num /= 8;
                     }
                     i = 0;
-                    for (; i < num_digits; i++) 
+                    for (; i < num_digits; i++)
                     {
-                        putchar(num_str[i]);
+                        _putchar(num_str[i]);
                         charcount++;
                     }
                 }
             }
-            else if (*format == 'p') 
+            else if (*format == 'p')
             {
                 void *ptr = va_arg(arglist, void *);
                 int num_digits = 0, i;
                 char *hex_str;
                 unsigned long int ui = (unsigned long int)ptr;
                 unsigned long int tmp_num = ui;
-                putchar('0');
-                putchar('x');
-                while (tmp_num > 0) 
+                _putchar('0');
+                _putchar('x');
+                while (tmp_num > 0)
                 {
                     num_digits++;
                     tmp_num /= 16;
                 }
                 hex_str = malloc(sizeof(char) * num_digits);
                 i = num_digits - 1;
-                for (; i >= 0; i--) 
+                for (; i >= 0; i--)
                 {
                     int rem = ui % 16;
-                    if (rem < 10) 
+                    if (rem < 10)
                     {
                         hex_str[i] = rem + '0';
-                    } else 
+                    } else
                     {
                         hex_str[i] = rem - 10 + 'a';
                     }
                     ui /= 16;
                 }
                 i = 0;
-                for (; i < num_digits; i++) 
+                for (; i < num_digits; i++)
                 {
-                    putchar(hex_str[i]);
+                    _putchar(hex_str[i]);
                     charcount++;
                 }
             }
-            else if (*format == 'u') 
+            else if (*format == 'u')
             {
                 unsigned int num = va_arg(arglist, unsigned int);
-                if (num == 0) 
+                if (num == 0)
                 {
-                    putchar('0');
+                    _putchar('0');
                     charcount++;
                 }
                 else {
                     int num_digits = 0, i;
                     unsigned int tmp_num = num;
                     char *num_str;
-                    while (tmp_num > 0) 
+                    while (tmp_num > 0)
                     {
                         num_digits++;
                         tmp_num /= 10;
                     }
                     num_str = malloc(sizeof(char) * num_digits);
                     i = num_digits - 1;
-                    for (; i >= 0; i--) 
+                    for (; i >= 0; i--)
                     {
                         num_str[i] = '0' + (num % 10);
                         num /= 10;
                     }
                     i = 0;
-                    for (; i < num_digits; i++) 
+                    for (; i < num_digits; i++)
                     {
-                        putchar(num_str[i]);
+                        _putchar(num_str[i]);
                         charcount++;
                     }
                 }
             }
-            else 
+            else
             {
-                putchar('%');
-                putchar(*format);
+                _putchar('%');
+                _putchar(*format);
                 charcount += 2;
             }
         }
-        else 
+        else
         {
-            putchar(*format);
+            _putchar(*format);
             charcount++;
         }
         format++;
@@ -229,5 +240,41 @@ int _printf(const char *format, ...)
 
     va_end(arglist);
     return charcount;
+}
+
+int main(void)
+{
+    int len;
+    int len2;
+    unsigned int ui;
+    void *addr;
+
+    len = _printf("Let's try to printf a simple sentence.\n");
+    len2 = printf("Let's try to printf a simple sentence.\n");
+    ui = (unsigned int)INT_MAX + 1024;
+    addr = (void *)0x7ffe637541f0;
+    _printf("Length:[%d, %i]\n", len, len);
+    printf("Length:[%d, %i]\n", len2, len2);
+    _printf("Negative:[%d]\n", -762534);
+    printf("Negative:[%d]\n", -762534);
+    _printf("Unsigned:[%u]\n", ui);
+    printf("Unsigned:[%u]\n", ui);
+    _printf("Unsigned octal:[%o]\n", ui);
+    printf("Unsigned octal:[%o]\n", ui);
+    _printf("Unsigned hexadecimal:[%x, %X]\n", ui, ui);
+    printf("Unsigned hexadecimal:[%x, %X]\n", ui, ui);
+    _printf("Character:[%c]\n", 'H');
+    printf("Character:[%c]\n", 'H');
+    _printf("String:[%s]\n", "I am a string !");
+    printf("String:[%s]\n", "I am a string !");
+    _printf("Address:[%p]\n", addr);
+    printf("Address:[%p]\n", addr);
+    len = _printf("Percent:[%%]\n");
+    len2 = printf("Percent:[%%]\n");
+    _printf("Len:[%d]\n", len);
+    printf("Len:[%d]\n", len2);
+    _printf("Unknown:[%r]\n");
+    printf("Unknown:[%r]\n");
+    return (0);
 }
 
