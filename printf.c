@@ -1,15 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <limits.h>
-
-#include <unistd.h>  // for write(), fileno()
-
-int _putchar(char c) {
-    return write(fileno(stdout), &c, 1);
-}
-
+#include <main.h>
 
 int _printf(const char *format, ...)
 {
